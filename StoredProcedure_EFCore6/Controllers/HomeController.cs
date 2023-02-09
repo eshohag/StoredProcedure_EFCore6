@@ -37,11 +37,10 @@ namespace StoredProcedure_EFCore6.Controllers
         {
             using (var command = _applicationDbContext.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = storedProcedure;
                 command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = storedProcedure;
                 command.Parameters.AddRange(sqlParameters.ToArray());
                 await _applicationDbContext.Database.OpenConnectionAsync();
-
                 using (var result = command.ExecuteReader())
                 {
                     var dataTable = new DataTable();
