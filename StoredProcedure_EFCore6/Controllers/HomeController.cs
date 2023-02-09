@@ -21,19 +21,16 @@ namespace StoredProcedure_EFCore6.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var departments = _applicationDbContext.Departments.ToList();
             var sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@Id", 0),
                 new SqlParameter("@Code", "")
             };
+            var data = new List<Department>();
             var departmentsSP = await GetDataTableFromSP("GetDepartment", sqlParameters);
-            if (departmentsSP.Rows.Count > 0)
-            {
-                var json = JsonConvert.SerializeObject(departmentsSP);
-                var model = JsonConvert.DeserializeObject<List<Department>>(json);
-            }
-            return View(departmentsSP);
+            var models =departmentsSP.ConvertDataTable<List<Department>>();
+
+            return View(models.Take(1000));
         }
 
         private async Task<DataTable> GetDataTableFromSP(string storedProcedure, List<SqlParameter> sqlParameters)
@@ -53,9 +50,6 @@ namespace StoredProcedure_EFCore6.Controllers
                     return dataTable;
                 }
             }
-        }
-   
-    
-       
+        }    
     }
 }
